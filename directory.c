@@ -53,7 +53,17 @@ void remove_directory() {
 }
 
 void get_current_directory() {
-    printf("Get current directory!\n\n");
+    // Has to be a lot longer, since it holds the absolute path
+    char current_directory_name[1000];
+    
+    // This will currently get and display the absolute path to the CWD.
+    // Is this what we want? Or do we want just the name of the current node?
+    if (getcwd(current_directory_name, sizeof(current_directory_name)) != NULL) {
+        printf("Current working directory: %s", current_directory_name);
+    } else {
+        // Error handling
+        perror("Unable to retrieve current directory name for you, here why: ");
+    }
 }
 
 void change_to_parent_directory() {
@@ -70,7 +80,7 @@ void close_directory() {
 
 char display_menu() {
     char choice;
-    printf("Select the option(s) appropriately by selecting the number:\n");
+    printf("\n\nSelect the option(s) appropriately by selecting the number:\n");
     printf("1. Create a directory\n");
     printf("2. Remove a directory\n");
     printf("3. Print current working directory\n");
