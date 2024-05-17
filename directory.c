@@ -9,13 +9,47 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <errno.h>
 
 void create_directory() {
-    printf("Create directory!\n\n");
+    char new_dir_name[50];    // would 50 characters be enough?
+    int dir_created;          // 0 if created, -1 if mkdir fails
+    mode_t mode = 0777;       // Grants full permissions for everyone, but should we? 
+
+    printf("Enter name of directory: ");
+    scanf("%49s", new_dir_name);
+
+    dir_created = mkdir(new_dir_name, mode);
+
+    if (dir_created == 0) {
+        printf("Directory created!! You're the best!\n\n");
+    } else {
+        // Error handling (dir_created == -1)
+        // I could check the value of the errno global variable and print out
+        // a more precise error message. However, this is probably good enough
+        perror("Unable to create directory for you, here's why: ");
+    }
+
 }
 
 void remove_directory() {
-    printf("Remove directory!\n\n");
+    char dir_to_remove[50];
+    int dir_removed;
+
+    printf("Enter the name of the directory to be removed: ");
+    scanf("%49s", dir_to_remove);
+
+    dir_removed = rmdir(dir_to_remove); // This can only delete EMPTY directories
+
+    if (dir_removed == 0) {
+        printf("Directory removed!! You're the best!\n\n");
+    } else {
+        // failure
+        perror("Unable to remove directory for you, here's why: ");
+    }
 }
 
 void get_current_directory() {
