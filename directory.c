@@ -78,8 +78,8 @@ void change_to_parent_directory() {
 }
 
 void read_directory() {
-    DIR *dir;
-    struct dirent *entry;
+    DIR *dir; // pointer to a "directory stream"
+    struct dirent *entry; // pointer to an "item" in the directory
 
     dir = opendir(".");
     if (dir == NULL) {
