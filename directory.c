@@ -7,17 +7,18 @@
  * 6. Closing the opened directory (I can't think of a similar command)
  */
 
+#include <dirent.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <errno.h>
 
 void create_directory() {
-    char new_dir_name[50];    // would 50 characters be enough?
-    int dir_created;          // 0 if created, -1 if mkdir fails
-    mode_t mode = 0777;       // Grants full permissions for everyone, but should we? 
+    char new_dir_name[50];  // would 50 characters be enough?
+    int dir_created;        // 0 if created, -1 if mkdir fails
+    mode_t mode = 0777;  // Grants full permissions for everyone, but should we?
 
     printf("Enter name of directory: ");
     scanf("%49s", new_dir_name);
@@ -32,7 +33,6 @@ void create_directory() {
         // a more precise error message. However, this is probably good enough
         perror("Unable to create directory for you, here's why: ");
     }
-
 }
 
 void remove_directory() {
@@ -42,7 +42,8 @@ void remove_directory() {
     printf("Enter the name of the directory to be removed: ");
     scanf("%49s", dir_to_remove);
 
-    dir_removed = rmdir(dir_to_remove); // This can only delete EMPTY directories
+    dir_removed =
+        rmdir(dir_to_remove);  // This can only delete EMPTY directories
 
     if (dir_removed == 0) {
         printf("Directory removed!! You're the best!\n\n");
@@ -55,10 +56,11 @@ void remove_directory() {
 void get_current_directory() {
     // Has to be a lot longer, since it holds the absolute path
     char current_directory_name[1000];
-    
+
     // This will currently get and display the absolute path to the CWD.
     // Is this what we want? Or do we want just the name of the current node?
-    if (getcwd(current_directory_name, sizeof(current_directory_name)) != NULL) {
+    if (getcwd(current_directory_name, sizeof(current_directory_name)) !=
+        NULL) {
         printf("Current working directory: %s", current_directory_name);
     } else {
         // Error handling
@@ -76,7 +78,25 @@ void change_to_parent_directory() {
 }
 
 void read_directory() {
-    printf("Read directory (ls)!\n\n");
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(".");
+    if (dir == NULL) {
+        perror("Unable to open directory for reading, here's why: ");
+        return;
+    }
+
+    printf("Items in current directory:\n");
+    entry = readdir(dir);
+    while (entry != NULL) {
+        printf("%s\n", entry->d_name);
+        entry = readdir(dir);
+    }
+
+    if (closedir(dir) != 0) {
+        perror("Unable to close the directory, here's why: ");
+    }
 }
 
 void close_directory() {
@@ -125,7 +145,6 @@ int main() {
             default:
                 printf("Invalid choice, please try again!\n\n");
         }
-
     }
 
     return 0;
