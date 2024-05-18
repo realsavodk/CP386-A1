@@ -67,7 +67,12 @@ void get_current_directory() {
 }
 
 void change_to_parent_directory() {
-    printf("Change to parent directory!\n\n");
+    if (chdir("..") == 0) {
+        printf("Moved up to parent directory.\n");
+    } else {
+        // Error handling
+        perror("Unable to move to parent directory, here's why: ");
+    }
 }
 
 void read_directory() {
